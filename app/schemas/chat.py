@@ -8,3 +8,6 @@ class Message(BaseModel):
 class ChatRequest(BaseModel):
     session_id: Optional[str] = None
     message: str  
+
+class ClearSessionRequest(BaseModel):
+    session_id: str

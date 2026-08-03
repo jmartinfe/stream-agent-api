@@ -14,7 +14,7 @@ origins = [origin.strip() for origin in allowed_origins_env.split(",")]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],  # Allow all origins for development; change in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
