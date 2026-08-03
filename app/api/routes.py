@@ -5,9 +5,9 @@ from fastapi.responses import StreamingResponse
 from app.schemas.chat import ChatRequest
 from app.services.agent import response_generator, clear_session
 
-router = APIRouter(prefix="/innie", tags=["Tracker"])
+router = APIRouter(prefix="/stream", tags=["Chat Endpoints"])
 
-@router.post("/stream", response_class=StreamingResponse)
+@router.post("/send-message", response_class=StreamingResponse)
 async def chat_stream(payload: ChatRequest):
     """
     Endpoint to stream responses from the LLM based on user input.
@@ -31,6 +31,7 @@ async def chat_stream(payload: ChatRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating response: {str(e)}")
 
+@router.delete("/clear-session")
 async def clear_chat_session(session_id: str):
     """
     Endpoint to clear the session history for a given session_id.
