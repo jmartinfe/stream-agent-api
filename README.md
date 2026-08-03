@@ -12,22 +12,22 @@ Decoupled system prompt loaded from an external file (prompts/system_prompt.txt)
 **Clone the repository and navigate into the project directory.**
 
 **Create and activate a virtual environment:**
-´´´
+```
 python -m venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-´´´
+```
 
 **Install dependencies:**
-´´´
+```
 pip install -r requirements.txt
-´´´
+```
 
 **Set your environment variable:**
-´´´
+```
 export OPENAI_API_KEY="your-api-key-here"
 export ALLOWED_ORIGINS="your-allowed-origins-here"
 export APP_TITLE="your app title here"
-´´´
+```
 
 **Create your system prompt file at prompts/system_prompt.txt with your agent instructions.**
 
