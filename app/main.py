@@ -1,5 +1,6 @@
 import os
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.concurrency import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from app.api.routes import router as stream_router
@@ -13,8 +14,17 @@ init_logging()
 logger = get_logger(__name__) # Initialize the logger
 rate_limiter = RateLimiter(max_requests=30, time_window=60) # Initialize the rate limiter
 
-# Initialize FastAPI application
-app = FastAPI(title=os.getenv("APP_TITLE", "Stream Agent API"))
+IS_PRODUCTION = os.getenv("ENVIRONMENT", "production").lower() == "production"
+APP_TITLE = os.getenv("APP_TITLE", "Stream Agent API")
+
+app = FastAPI(
+    title=APP_TITLE,
+    description="API for streaming responses from a language model based on user input.",
+    version="0.1.0",
+    docs_url="/docs" if not IS_PRODUCTION else None,
+    redoc_url="/redoc" if not IS_PRODUCTION else None,
+    openapi_url="/openapi.json" if not IS_PRODUCTION else None
+)
 
 @app.middleware("http")
 async def rate_limit_middleware(request: Request, call_next):
@@ -29,13 +39,11 @@ async def app_error_handler(request: Request, exc: AppError):
     logger.error("AppError handled: %s", exc.detail)
     return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
 
-
-@app.lifespan.on_event("startup")
-async def on_startup():
+# Define lifespan events for startup and shutdown
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     logger.info("Stream Agent API startup complete")
-
-@app.lifespan.on_event("shutdown")
-async def on_shutdown():
+    yield
     logger.info("Stream Agent API shutdown")
 
 # Set up CORS middleware
