@@ -2,7 +2,7 @@ import os
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from app.api.routes import router as innie_router
+from app.api.routes import router as stream_router
 from app.core.exceptions import AppError
 from app.core.logging import init_logging, get_logger
 from dotenv import load_dotenv
@@ -10,10 +10,8 @@ from app.core.middleware import RateLimiter
 
 load_dotenv()  # Load environment variables from .env file
 init_logging()
-# Initialize the logger
-logger = get_logger(__name__)
-# Initialize the rate limiter
-rate_limiter = RateLimiter(max_requests=30, time_window=60)
+logger = get_logger(__name__) # Initialize the logger
+rate_limiter = RateLimiter(max_requests=30, time_window=60) # Initialize the rate limiter
 
 # Initialize FastAPI application
 app = FastAPI(title=os.getenv("APP_TITLE", "Stream Agent API"))
@@ -32,11 +30,11 @@ async def app_error_handler(request: Request, exc: AppError):
     return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
 
 
-@app.on_event("startup")
+@app.lifespan.on_event("startup")
 async def on_startup():
     logger.info("Stream Agent API startup complete")
 
-@app.on_event("shutdown")
+@app.lifespan.on_event("shutdown")
 async def on_shutdown():
     logger.info("Stream Agent API shutdown")
 
@@ -46,11 +44,25 @@ origins = [origin.strip() for origin in allowed_origins_env.split(",")]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for development; change in production
+    allow_origins=origins, # Allow specified origins from environment variable
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+@app.middleware("http")
+async def check_referer(request: Request, call_next):
+    referer = request.headers.get("referer")
+    allowed_domains = origins  # Use the same allowed origins for referer check
+    
+    if referer:
+        if not any(domain in referer for domain in allowed_domains):
+            raise HTTPException(status_code=403, detail="Forbidden: Invalid referer")
+    
+    return await call_next(request)
+
 # Include the tracker router
-app.include_router(innie_router)
+app.include_router(stream_router)
+
+# Include the tracker router
+app.include_router(stream_router)
