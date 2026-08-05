@@ -48,7 +48,6 @@ async def chat_stream(payload: ChatRequest, api_key: str = Depends(verify_api_ke
     """
     Endpoint to stream responses from the LLM based on user input.
     """
-    await verify_api_key(api_key)
     session_id = payload.session_id or str(uuid4())
     logger.info("Received chat stream request session_id=%s", session_id)
 
@@ -75,7 +74,6 @@ async def clear_chat_session(payload: ClearSessionRequest, api_key: str = Depend
     """
     Endpoint to clear the session history for a given session_id.
     """
-    await verify_api_key(api_key)
     try:
         clear_session(session_id=payload.session_id)
         return {"message": f"Session {payload.session_id} cleared successfully."}
@@ -90,7 +88,6 @@ async def clear_all_chat_sessions(api_key: str = Depends(verify_api_key)):
     """
     Endpoint to clear all session histories.
     """
-    await verify_api_key(api_key)
     logger.info("Clearing all sessions")
     try:
         clear_all_sessions()
