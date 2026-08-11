@@ -33,7 +33,7 @@ Create a `.env` file in the root directory based on the example below:
     APP_TITLE=Stream Agent API
     ```
 
-**Create your system prompt file at prompts/system_prompt.txt with your agent instructions.**
+**Create your system prompt file at data/system_prompt.txt with your agent instructions.**
 
 ## Running the Application
 Start the development server with Uvicorn:
