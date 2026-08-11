@@ -22,12 +22,16 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-**Set your environment variable:**
-```
-export OPENAI_API_KEY="your-api-key-here"
-export ALLOWED_ORIGINS="your-allowed-origins-here"
-export APP_TITLE="your app title here"
-```
+**Environment Variables:**
+Create a `.env` file in the root directory based on the example below:
+    ```
+    OPENAI_API_KEY=sk-proj-your-actual-api-key
+    API_KEY=your-internal-api-key
+    ALLOWED_ORIGINS=http://localhost:5500,https://your-frontend.vercel.app
+    ENVIRONMENT=development
+    LOG_LEVEL=INFO
+    APP_TITLE=Stream Agent API
+    ```
 
 **Create your system prompt file at prompts/system_prompt.txt with your agent instructions.**
 
