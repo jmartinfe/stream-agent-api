@@ -43,6 +43,14 @@ def verify_api_key(api_key: str = Security(API_KEY_HEADER)):
     logger.info("API Key verified successfully")
     return api_key
 
+@router.get("/health")
+async def health_check():
+    """
+    Health check endpoint to verify that the API is running.
+    """
+    logger.info("Health check requested")
+    return {"status": "ok", "message": "API is running"}
+
 @router.post("/send-message", response_class=StreamingResponse)
 async def chat_stream(payload: ChatRequest, api_key: str = Depends(verify_api_key)):
     """
