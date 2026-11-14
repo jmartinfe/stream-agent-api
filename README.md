@@ -24,6 +24,7 @@ pip install -r requirements.txt
 
 **Environment Variables:**
 Create a `.env` file in the root directory based on the example below:
+
     ```
     OPENAI_API_KEY=sk-proj-your-actual-api-key
     API_KEY=your-internal-api-key
